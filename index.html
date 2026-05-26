@@ -116,9 +116,12 @@
     .hero-layout {
       display: grid;
       grid-template-columns: 180px 1fr;
-      gap: 2.5rem;
-      align-items: start;
+      grid-template-rows: auto auto;
+      gap: 0 2.5rem;
     }
+    .hero-layout .portrait { grid-row: 1; grid-column: 1; }
+    .hero-layout .hero-bio { grid-row: 1; grid-column: 2; }
+    .hero-layout .hero-links { grid-row: 2; grid-column: 2; }
     @media (max-width: 720px) {
       .hero-layout {
         grid-template-columns: 1fr;
@@ -128,7 +131,6 @@
 
     .portrait {
       width: 180px;
-      height: 220px;
       background: var(--cloud-soft);
       position: relative;
       overflow: hidden;
@@ -192,8 +194,7 @@
       font-size: 1.25rem;
       line-height: 1.55;
       color: var(--ink-soft);
-      max-width: 36rem;
-      margin-bottom: 2.5rem;
+      margin-bottom: 0;
       font-weight: 400;
     }
     .bio em { font-style: italic; }
@@ -202,6 +203,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0 1.75rem;
+      margin-top: 1.5rem;
       font-family: var(--mono);
       font-size: 0.78rem;
       letter-spacing: 0.04em;
@@ -246,7 +248,6 @@
       line-height: 1.45;
       color: var(--ink);
       font-weight: 400;
-      max-width: 36rem;
     }
     .now p em { font-style: italic; color: var(--accent); }
 
@@ -370,7 +371,6 @@
       font-size: 1.05rem;
       line-height: 1.6;
       color: var(--ink-soft);
-      max-width: 36rem;
       margin-bottom: 1.25rem;
     }
     .notes strong { font-weight: 500; color: var(--ink); }
@@ -413,7 +413,7 @@
         <img src="me2.jpg" alt="Nicholas Fry">
       </div>
 
-      <div class="hero-text">
+      <div class="hero-bio">
         <div class="kicker">PhD Candidate · Imperial College London</div>
 
         <div class="name-row">
@@ -428,13 +428,13 @@
           <a href="https://www.imperial.ac.uk/people/p.kelly">Paul H. J. Kelly</a> and
           <a href="https://www.doc.ic.ac.uk/~ajd/">Andrew J. Davison</a>.
         </p>
-
-        <nav class="hero-links">
-          <a href="mailto:nmjfry@gmail.com">email</a>
-          <a href="https://github.com/nmjfry" target="_blank" rel="noopener">github</a>
-          <a href="https://scholar.google.com/" target="_blank" rel="noopener">scholar</a>
-        </nav>
       </div>
+
+      <nav class="hero-links">
+        <a href="mailto:nmjfry@gmail.com">email</a>
+        <a href="https://github.com/nmjfry" target="_blank" rel="noopener">github</a>
+        <a href="https://scholar.google.com/" target="_blank" rel="noopener">scholar</a>
+      </nav>
     </div>
   </div>
 </header>
@@ -494,8 +494,7 @@
   <div class="wrap">
     <div class="section-label">OTHER</div>
     <p>
-      TA and marker for Imperial Robotics (3rd year &amp; MSc) and Advanced Computer Architecture
-      (3rd &amp; 4th year).  Poster presenter at <a href="https://llvm.swoogo.com/2024eurollvm" target="_blank" rel="noopener">EuroLLVM 2024</a> and
+      TA and marker for Imperial Robotics and Advanced Computer Architecture courses.  Poster presenter at <a href="https://llvm.swoogo.com/2024eurollvm" target="_blank" rel="noopener">EuroLLVM 2024</a> and
       <a href="https://reach.theiet.org/" target="_blank" rel="noopener">REACH 2024</a>. Volunteered for <a href="https://www.egsr2024.uk/" target="_blank" rel="noopener">EGSR 2024</a>. Attended <a href="https://iplab.dmi.unict.it/icvss2025/" target="_blank" rel="noopener">ICVSS 2025</a>. Also attended <a href="https://paiss.inria.fr/" target="_blank" rel="noopener">PAISS 2025</a> and <a href="https://www.hipeac.net/acaces/2024/#/program/courses/" target="_blank" rel="noopener">ACACES 2024</a> (both grant-awarded).
     </p>
     <p>
