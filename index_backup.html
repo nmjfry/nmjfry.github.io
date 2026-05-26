@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nicholas Fry</title>
+  <meta name="description" content="Nicholas Fry — PhD researcher at Imperial College London working on differentiable rendering, compilers, and on-sensor vision." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Magritte palette — The Son of Man / The Empire of Light / The False Mirror */
+      --sky:         #9cb8c9;   /* muted Magritte sky */
+      --sky-deep:    #6a8ca1;
+      --cloud:       #f4f0e8;   /* warm cloud white, page bg */
+      --cloud-soft:  #ece6d8;
+      --ink:         #18191c;   /* near-black, not pure */
+      --ink-soft:    #3a3c3f;
+      --ink-muted:   #7c7a74;
+      --ink-faint:   #b4ad9f;
+      --rule:        #d9d2c2;
+      --accent:      #5a8aa8;   /* Magritte sky blue — the empire of light */
+      --leaf:        #3f5a3e;   /* Magritte green */
+      --serif:       'Cormorant Garamond', 'Garamond', Georgia, serif;
+      --mono:        'JetBrains Mono', Menlo, monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --sky:         #2a3a48;
+        --sky-deep:    #1a2733;
+        --cloud:       #161616;
+        --cloud-soft:  #1e1e1d;
+        --ink:         #efeae0;
+        --ink-soft:    #c5c0b5;
+        --ink-muted:   #86837c;
+        --ink-faint:   #4a4843;
+        --rule:        #2a2826;
+        --accent:      #8cb5d0;
+        --leaf:        #6a8a6b;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--serif);
+      font-size: 19px;
+      line-height: 1.55;
+      font-weight: 400;
+      color: var(--ink);
+      background: var(--cloud);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 0;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    a:hover { color: var(--accent); }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 1.75rem;
+    }
+
+    /* ================ HERO ================ */
+    .hero {
+      position: relative;
+      min-height: 82vh;
+      display: flex;
+      align-items: center;
+      padding: 6rem 0 4rem;
+      overflow: hidden;
+    }
+
+    /* ASCII donut — sits next to the name */
+    .name-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+    .name-row h1 { margin-bottom: 0; }
+    .donut {
+      font-family: var(--mono);
+      font-size: 6.5px;
+      line-height: 1;
+      letter-spacing: 0;
+      white-space: pre;
+      color: var(--ink);
+      opacity: 0.75;
+      pointer-events: none;
+      user-select: none;
+      text-align: left;
+      font-feature-settings: "liga" 0;
+      margin: 0;
+      flex-shrink: 0;
+    }
+    @media (max-width: 720px) {
+      .name-row { gap: 1rem; }
+      .donut { font-size: 5px; opacity: 0.6; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .donut { /* static render, no animation */ }
+    }
+
+    .hero-content { position: relative; z-index: 2; }
+
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+    @media (max-width: 720px) {
+      .hero-layout {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+      }
+    }
+
+    .portrait {
+      width: 180px;
+      height: 220px;
+      background: var(--cloud-soft);
+      position: relative;
+      overflow: hidden;
+      /* a whisper of a frame, not a border */
+      box-shadow: inset 0 0 0 1px var(--rule);
+    }
+    .portrait img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .portrait-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.75rem;
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+    .portrait-placeholder svg {
+      width: 36px; height: 36px;
+      opacity: 0.5;
+    }
+    @media (max-width: 720px) {
+      .portrait { width: 140px; height: 170px; }
+    }
+
+    .hero-text { min-width: 0; }
+
+    .kicker {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--ink-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(2.75rem, 6vw, 4rem);
+      line-height: 1.02;
+      letter-spacing: -0.015em;
+      margin-bottom: 1.75rem;
+      color: var(--ink);
+    }
+    h1 em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--accent);
+    }
+
+    .bio {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      max-width: 36rem;
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+    }
+    .bio em { font-style: italic; }
+
+    .hero-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 1.75rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+    }
+    .hero-links a {
+      color: var(--ink-muted);
+      border-bottom: none;
+      padding: 0.25rem 0;
+      position: relative;
+    }
+    .hero-links a::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 1px;
+      background: var(--ink-muted);
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.3s ease, background 0.2s;
+    }
+    .hero-links a:hover { color: var(--accent); }
+    .hero-links a:hover::after { transform: scaleX(1); background: var(--accent); }
+
+    /* ================ BLOOM ================ */
+    .bloom-section {
+      padding: 1rem 0 2rem;  /* tighter than normal sections — this is a visual beat */
+      border-top: none;
+    }
+    .bloom {
+      margin: 0;
+      padding: 0;
+    }
+    .bloom canvas {
+      display: block;
+      width: 100%;
+      height: 400px;
+      background: var(--cloud-soft);
+      cursor: pointer;
+      box-shadow: inset 0 0 0 1px var(--rule);
+    }
+    .bloom figcaption {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--ink-faint);
+      font-style: normal;
+    }
+    .bloom-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: 0.65rem;
+      gap: 1rem;
+    }
+    .bloom-controls {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+    }
+    .bloom-sep {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--ink-faint);
+      opacity: 0.5;
+    }
+    .bloom-reset {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--ink-faint);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: color 0.15s;
+      text-transform: lowercase;
+    }
+    .bloom-reset:hover { color: var(--accent); }
+    .bloom-reset:focus-visible {
+      outline: 1px solid var(--accent);
+      outline-offset: 2px;
+    }
+    /* Toggle gets a subtle "on" indicator — a small dot before the label */
+    #bloom-beams::before {
+      content: '○';
+      margin-right: 0.35em;
+      font-size: 0.9em;
+      color: var(--ink-faint);
+      transition: color 0.15s;
+    }
+    #bloom-beams[aria-pressed="true"]::before {
+      content: '●';
+      color: var(--ink-soft);
+    }
+    #bloom-beams[aria-pressed="true"]:hover::before { color: var(--accent); }
+    @media (max-width: 720px) {
+      .bloom canvas { height: 280px; }
+    }
+
+    /* ================ SECTIONS ================ */
+    section {
+      padding: 5rem 0;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--ink-muted);
+      margin-bottom: 2.5rem;
+    }
+
+    /* ================ CURRENT ================ */
+    .now p {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      line-height: 1.45;
+      color: var(--ink);
+      font-weight: 400;
+      max-width: 36rem;
+    }
+    .now p em { font-style: italic; color: var(--accent); }
+
+    /* ================ PAPERS ================ */
+    .paper {
+      padding: 3rem 0;
+      border-bottom: 1px solid var(--rule);
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .paper:first-of-type { border-top: 1px solid var(--rule); }
+
+    .paper-visual {
+      width: 160px; height: 160px;
+      position: relative;
+    }
+    .paper-visual svg { width: 100%; height: 100%; display: block; }
+
+    .paper-meta {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+      margin-bottom: 0.6rem;
+      display: flex;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+    }
+    .paper-meta .venue { color: var(--ink); }
+    .paper-meta .status {
+      font-style: italic;
+      font-family: var(--serif);
+      font-size: 0.88rem;
+      letter-spacing: 0;
+      color: var(--ink-muted);
+    }
+
+    .paper h3 {
+      font-family: var(--serif);
+      font-size: 1.75rem;
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+
+    .paper .authors {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--ink-muted);
+      margin-bottom: 0.9rem;
+    }
+    .paper .authors .me { color: var(--ink); font-style: normal; }
+
+    .paper .desc {
+      font-family: var(--serif);
+      font-size: 1.02rem;
+      line-height: 1.55;
+      color: var(--ink-soft);
+    }
+
+    @media (max-width: 680px) {
+      .paper { grid-template-columns: 1fr; gap: 1.5rem; }
+      .paper-visual { width: 140px; height: 140px; }
+    }
+
+    /* ================ EXPERIENCE ================ */
+    .xp-item {
+      padding: 1.4rem 0;
+      border-bottom: 1px solid var(--rule);
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 2.5rem;
+      align-items: baseline;
+    }
+    .xp-item:first-child { border-top: 1px solid var(--rule); }
+
+    .xp-when {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      color: var(--ink-muted);
+    }
+    .xp-when .where {
+      display: block;
+      font-style: italic;
+      font-family: var(--serif);
+      font-size: 0.9rem;
+      color: var(--ink-faint);
+      margin-top: 0.1rem;
+      letter-spacing: 0;
+    }
+
+    .xp-role {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--ink);
+      margin-bottom: 0.3rem;
+      letter-spacing: -0.005em;
+    }
+    .xp-role .org { font-style: italic; color: var(--accent); }
+    .xp-desc {
+      font-family: var(--serif);
+      font-size: 0.98rem;
+      line-height: 1.5;
+      color: var(--ink-soft);
+    }
+
+    @media (max-width: 680px) {
+      .xp-item { grid-template-columns: 1fr; gap: 0.4rem; }
+    }
+
+    /* ================ NOTES ================ */
+    .notes p {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      max-width: 36rem;
+      margin-bottom: 1.25rem;
+    }
+    .notes strong { font-weight: 500; color: var(--ink); }
+
+    /* ================ FOOTER ================ */
+    footer {
+      padding: 4rem 0 5rem;
+      border-top: 1px solid var(--rule);
+      margin-top: 3rem;
+    }
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    footer .sig {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--ink-muted);
+    }
+    footer .meta {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+
+  <div class="wrap hero-content">
+    <div class="hero-layout">
+      <div class="portrait" aria-label="Portrait of Nicholas Fry">
+        <!-- Replace this placeholder with: <img src="assets/portrait.jpg" alt="Nicholas Fry"> -->
+        <div class="portrait-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+            <circle cx="12" cy="9" r="3.5"/>
+            <path d="M4.5 20.5c0-4 3.4-7 7.5-7s7.5 3 7.5 7"/>
+          </svg>
+          <span>portrait.jpg<br>→ assets/</span>
+        </div>
+      </div>
+
+      <div class="hero-text">
+        <div class="kicker">PhD · Imperial College London</div>
+
+        <div class="name-row">
+          <h1>Nicholas Fry</h1>
+          <!-- ASCII donut (a1k0n math, R1=1, R2=2, K2=5) -->
+          <pre class="donut" id="donut" aria-hidden="true"></pre>
+        </div>
+
+        <p class="bio">
+          I work at the seam between differentiable rendering and compiler design —
+          making vision pipelines fast on GPUs, on graph processors, and on the silicon
+          of image sensors. Co-supervised by
+          <a href="https://www.imperial.ac.uk/people/p.kelly">Paul H. J. Kelly</a> and
+          <a href="https://www.doc.ic.ac.uk/~ajd/">Andrew J. Davison</a>.
+        </p>
+
+        <nav class="hero-links">
+          <a href="mailto:nmjfry@gmail.com">email</a>
+          <a href="https://github.com/nmjfry" target="_blank" rel="noopener">github</a>
+          <a href="https://scholar.google.com/" target="_blank" rel="noopener">scholar</a>
+          <a href="cv.pdf">cv</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ BLOOM ============ -->
+<section class="bloom-section">
+  <div class="wrap">
+    <figure class="bloom">
+      <canvas id="bloom-canvas" aria-label="Interactive tile grid; click to place markers"></canvas>
+      <div class="bloom-foot">
+        <figcaption>click to place markers · shortest path between them highlights</figcaption>
+        <div class="bloom-controls">
+          <button type="button" id="bloom-beams" class="bloom-reset" aria-pressed="true">beams on</button>
+          <span class="bloom-sep" aria-hidden="true">·</span>
+          <button type="button" id="bloom-reset" class="bloom-reset">reset</button>
+        </div>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ EXPERIENCE ============ -->
+<section>
+  <div class="wrap">
+    <div class="section-label">Before</div>
+
+    <div class="xp-item">
+      <div class="xp-when">2024 — present<span class="where">London</span></div>
+      <div>
+        <div class="xp-role">PhD Researcher · <span class="org">Imperial College London</span></div>
+        <p class="xp-desc">Differentiable rendering, compilers, on-sensor vision.</p>
+      </div>
+    </div>
+
+    <div class="xp-item">
+      <div class="xp-when">2023<span class="where">Paris-Saclay</span></div>
+      <div>
+        <div class="xp-role">MLIR Research Intern · <span class="org">CEA-List</span></div>
+        <p class="xp-desc">
+          Built an MLIR-based tool that auto-generates instruction-set-simulator state transition
+          functions from an accelerator design (Verilog/Chisel → CIRCT → MLIR). Presented at EuroLLVM 2024.
+        </p>
+      </div>
+    </div>
+
+    <div class="xp-item">
+      <div class="xp-when">2022<span class="where">Bristol</span></div>
+      <div>
+        <div class="xp-role">LLVM Compiler Intern · <span class="org">Graphcore</span></div>
+        <p class="xp-desc">
+          Scheduling model for the IPU backend in TableGen/C++, and an MIR pass that removed register
+          hazard bubbles — up to 30% fewer cycles on client code. llvm-mca support and objdump work.
+        </p>
+      </div>
+    </div>
+
+    <div class="xp-item">
+      <div class="xp-when">2020 — 2024<span class="where">London</span></div>
+      <div>
+        <div class="xp-role">MEng Computing · <span class="org">Imperial</span></div>
+        <p class="xp-desc">
+          Visual Computing &amp; Robotics, first-class honours. Thesis: <em>3D Gaussian Splatting on a
+          Graph Processor</em> — supervised by Andrew J. Davison, awarded the Corporate Partnership
+          Prize for Technical Innovation.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NOTES ============ -->
+<section class="notes">
+  <div class="wrap">
+    <div class="section-label">Elsewhere</div>
+    <p>
+      TA and marker for Imperial Robotics (3rd year &amp; MSc) and Advanced Computer Architecture
+      (3rd &amp; 4th year). Volunteered at EGSR 2024. Poster presenter at EuroLLVM 2024 and
+      REACH 2024. ICVSS 2025; ACACES 2024 (grant-funded).
+    </p>
+    <p>
+      Nine years of guitar, avid runner and climber, secretary of the ICL Gymnastics &amp; Parkour
+      Society. English mother tongue; fluent French; working knowledge of Spanish, Portuguese,
+      and Swedish.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="sig">— nf</div>
+    <div class="meta">April 2026</div>
+  </div>
+</footer>
+
+<script>
+/*
+ * ASCII donut — port of a1k0n's donut math
+ * (https://www.a1k0n.net/2011/07/20/donut-math.html)
+ * Same constants, same luminance ramp, same spin rates.
+ */
+(function () {
+  const el = document.getElementById('donut');
+  if (!el) return;
+
+  // Original's screen is 80x22, but that wraps awkwardly. 40x22 keeps
+  // it tight enough to float in the hero without dominating.
+  const SCREEN_W = 40;
+  const SCREEN_H = 22;
+  const THETA_STEP = 0.07;
+  const PHI_STEP   = 0.02;
+  const R1 = 1, R2 = 2, K2 = 5;
+  // K1 chosen so the donut just fits within the screen (a1k0n's formula)
+  const K1_X = SCREEN_W * K2 * 3 / (8 * (R1 + R2));
+  // y-axis in a monospace grid is ~2x taller than x per char, so halve
+  const K1_Y = K1_X * 0.5;
+  const LUM = '.,-~:;=!*#$@';
+
+  let A = 0, B = 0;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function frame() {
+    const cosA = Math.cos(A), sinA = Math.sin(A);
+    const cosB = Math.cos(B), sinB = Math.sin(B);
+
+    const output = new Array(SCREEN_W * SCREEN_H).fill(' ');
+    const zbuf   = new Array(SCREEN_W * SCREEN_H).fill(0);
+
+    for (let theta = 0; theta < 6.28; theta += THETA_STEP) {
+      const cosT = Math.cos(theta), sinT = Math.sin(theta);
+
+      for (let phi = 0; phi < 6.28; phi += PHI_STEP) {
+        const cosP = Math.cos(phi), sinP = Math.sin(phi);
+
+        const circleX = R2 + R1 * cosT;
+        const circleY = R1 * sinT;
+
+        const x = circleX * (cosB * cosP + sinA * sinB * sinP) - circleY * cosA * sinB;
+        const y = circleX * (sinB * cosP - sinA * cosB * sinP) + circleY * cosA * cosB;
+        const z = K2 + cosA * circleX * sinP + circleY * sinA;
+        const ooz = 1 / z;
+
+        const xp = Math.floor(SCREEN_W / 2 + K1_X * ooz * x);
+        const yp = Math.floor(SCREEN_H / 2 - K1_Y * ooz * y);
+
+        const L = cosP * cosT * sinB - cosA * cosT * sinP - sinA * sinT
+                + cosB * (cosA * sinT - cosT * sinA * sinP);
+
+        if (L > 0 && xp >= 0 && xp < SCREEN_W && yp >= 0 && yp < SCREEN_H) {
+          const idx = xp + SCREEN_W * yp;
+          if (ooz > zbuf[idx]) {
+            zbuf[idx] = ooz;
+            const li = Math.min(11, Math.floor(L * 8));
+            output[idx] = LUM[li];
+          }
+        }
+      }
+    }
+
+    // Assemble into a string with newlines
+    let out = '';
+    for (let j = 0; j < SCREEN_H; j++) {
+      out += output.slice(j * SCREEN_W, (j + 1) * SCREEN_W).join('') + '\n';
+    }
+    el.textContent = out;
+
+    if (!reduceMotion) {
+      A += 0.04;
+      B += 0.02;
+      requestAnimationFrame(frame);
+    }
+  }
+
+  frame();
+})();
+</script>
+
+<script>
+/*
+ * Bloom propagation on a 2D mesh of SRAM tiles.
+ *
+ * Each tile holds some Gaussians. Every "step" (one tile per frame in the
+ * IPU sense), each tile forwards copies of any Gaussian whose elliptical
+ * footprint spills across its borders — N/E/S/W only, one hop per step.
+ * Over a few steps the Gaussian "blooms" outward from its anchor tile.
+ *
+ * No routing layer here (Gaussians land on their anchor directly via
+ * pointer hover); the ascii comment near spawnGaussian() shows where
+ * routing would plug in.
+ */
+(function () {
+  const canvas = document.getElementById('bloom-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  // -------- config --------
+  const TARGET_TILE_PX = 18;  // aim for ~18px tiles; recomputed on resize so tiles stay roughly square
+  let   COLS = 32;            // recomputed on resize
+  let   ROWS = 14;            // recomputed on resize
+  const STEP_MS = 60;         // "one tile per frame" cadence — faster
+  const MAX_SPAWN_MS = 40;    // min gap between pointer-triggered drops
+  const G_LIFE = 5;           // bloom steps before a Gaussian dies
+  const G_SIGMA_TILES = 2.4;  // footprint radius, in tiles
+  const FOOTPRINT_THRESH = 0.22; // alpha threshold for "does it reach this tile"
+
+  // Twinkle — ambient, low-intensity Gaussians that spawn at random tiles
+  // when the user isn't hovering, so the field feels alive
+  const TWINKLE_MIN_MS = 220;
+  const TWINKLE_MAX_MS = 700;
+  const TWINKLE_INTENSITY = 0.3;  // fraction of normal Gaussian alpha
+  const TWINKLE_LIFE = 3;         // shorter-lived than hover drops
+
+  // Beams — each placed marker holds a persistent bloom identical to
+  // a frozen mouse-hover bloom. Toggled on/off by the "beams" button.
+  const BEAM_INTENSITY = 0.85;
+  let beamsOn = true;             // toggled by the "beams on/off" button
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Muted Magritte-adjacent palette — no neon
+  const PALETTE = [
+    [122, 56, 38],    // oxblood — kept for the tile demo palette
+    [106, 140, 161],  // sky blue
+    [63,  90, 62],    // leaf green
+    [184, 140, 70],   // warm ochre
+    [154, 100, 120],  // dusty rose
+    [90,  100, 130],  // dim indigo
+  ];
+
+  // Markers & path — persistent graph nodes placed by clicking.
+  // Two markers form an edge (complete graph); shortest path is computed
+  // from the first-placed to the last-placed marker.
+  const MARKER_COLOR = [122, 56, 38];    // oxblood — distinct from page accent
+  const PATH_COLOR   = [199, 150, 60];   // warm gold — distinct from oxblood/bloom
+
+  // -------- state --------
+  const gaussians = [];
+  const pulses = [];
+  const markers = [];   // [{tx, ty, born}, ...] in order placed
+
+  let tileW = 0, tileH = 0;
+  let dpr = 1;
+  let lastSpawn = 0;
+  let lastStepAt = 0;
+  let nextTwinkleAt = 0;
+  let pointer = { x: -1, y: -1, active: false };
+
+  function idx(tx, ty) { return ty * COLS + tx; }
+
+  function resize() {
+    dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    const rect = canvas.getBoundingClientRect();
+    canvas.width  = Math.floor(rect.width  * dpr);
+    canvas.height = Math.floor(rect.height * dpr);
+    // Adaptive tile count so tiles stay roughly square across viewport widths
+    COLS = Math.max(16, Math.min(60, Math.round(rect.width  / TARGET_TILE_PX)));
+    ROWS = Math.max(8,  Math.min(24, Math.round(rect.height / TARGET_TILE_PX)));
+    tileW = canvas.width  / COLS;
+    tileH = canvas.height / ROWS;
+    // Any in-flight Gaussians used the old grid — clear them so the sim stays consistent
+    gaussians.length = 0;
+    pulses.length = 0;
+    markers.length = 0;
+  }
+
+  // Precompute: for a Gaussian at anchor (ax,ay) with sigma in tile units,
+  // does the footprint (gaussian falloff) at tile (tx,ty) exceed threshold?
+  // We check if at LEAST one point of the footprint is visible at tile centre.
+  // This defines the set of tiles the Gaussian "wants" to cover.
+  function inFootprint(ax, ay, tx, ty) {
+    const dx = tx - ax, dy = ty - ay;
+    const r2 = (dx * dx + dy * dy) / (G_SIGMA_TILES * G_SIGMA_TILES);
+    return Math.exp(-0.5 * r2) >= FOOTPRINT_THRESH;
+  }
+
+  function spawnGaussian(tx, ty) {
+    // [Routing layer would go here: if you wanted Gaussians to start at some
+    //  other tile and hop toward (tx,ty) before blooming, push a "traveller"
+    //  record instead and convert to bloom mode on arrival.]
+    const opts = arguments[2] || {};
+    const color = opts.color || PALETTE[(Math.random() * PALETTE.length) | 0];
+    const persistent = !!opts.persistent;
+
+    const g = {
+      ax: tx, ay: ty,
+      color,
+      step: 0,
+      occupied: new Set([idx(tx, ty)]),
+      frontier: new Set([idx(tx, ty)]),
+      intensity: opts.intensity != null ? opts.intensity : 1.0,
+      life: opts.life != null ? opts.life : G_LIFE,
+      // Persistent blooms: propagate normally (animated tree + pulses),
+      // then freeze at full footprint. They still emit pulses during growth.
+      emitPulses: opts.emitPulses !== false,
+      persistent,
+    };
+    gaussians.push(g);
+    return g;
+  }
+
+  // Advance the simulation by one "frame" in the IPU sense.
+  // Each tile on the frontier looks at its 4 neighbours; if the Gaussian's
+  // footprint overlaps that neighbour AND the neighbour is in-bounds AND
+  // hasn't received a copy yet, send a copy through that channel.
+  function step() {
+    for (let gi = gaussians.length - 1; gi >= 0; gi--) {
+      const g = gaussians[gi];
+
+      if (g.persistent) {
+        // Persistent: still propagate (animated tree + channel pulses) until
+        // the frontier empties, then hold the bloomed state forever.
+        // Never culled by age.
+        if (g.frontier.size === 0) continue;
+      } else {
+        g.step++;
+        if (g.step > g.life) { gaussians.splice(gi, 1); continue; }
+      }
+
+      const nextFrontier = new Set();
+      for (const tIdx of g.frontier) {
+        const tx = tIdx % COLS;
+        const ty = (tIdx - tx) / COLS;
+
+        // Four cardinal neighbours — the only channels that exist
+        const nbrs = [
+          [tx + 1, ty], [tx - 1, ty],
+          [tx, ty + 1], [tx, ty - 1],
+        ];
+        for (const [nx, ny] of nbrs) {
+          if (nx < 0 || nx >= COLS || ny < 0 || ny >= ROWS) continue;
+          const nIdx = idx(nx, ny);
+          if (g.occupied.has(nIdx)) continue;
+          if (!inFootprint(g.ax, g.ay, nx, ny)) continue;
+
+          g.occupied.add(nIdx);
+          nextFrontier.add(nIdx);
+          if (g.emitPulses) {
+            pulses.push({
+              fromX: tx, fromY: ty,
+              toX: nx, toY: ny,
+              born: performance.now(),
+            });
+          }
+        }
+      }
+      g.frontier = nextFrontier;
+    }
+
+    // Cull old pulses
+    const now = performance.now();
+    for (let i = pulses.length - 1; i >= 0; i--) {
+      if (now - pulses[i].born > 400) pulses.splice(i, 1);
+    }
+  }
+
+  // -------- rendering --------
+  function draw() {
+    const w = canvas.width, h = canvas.height;
+
+    // Background wash — the cloud color from the page palette
+    const bg = getComputedStyle(document.body).getPropertyValue('--cloud-soft').trim() || '#ece6d8';
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    // Tile grid — hairline only, very faint
+    const ruleColor = getComputedStyle(document.body).getPropertyValue('--rule').trim() || '#d9d2c2';
+    ctx.strokeStyle = ruleColor;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.55;
+    ctx.beginPath();
+    for (let c = 1; c < COLS; c++) {
+      const x = Math.round(c * tileW) + 0.5;
+      ctx.moveTo(x, 0); ctx.lineTo(x, h);
+    }
+    for (let r = 1; r < ROWS; r++) {
+      const y = Math.round(r * tileH) + 0.5;
+      ctx.moveTo(0, y); ctx.lineTo(w, y);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Gaussians — each occupied tile gets a soft radial bloom whose intensity
+    // falls off with distance from the anchor (Gaussian footprint)
+    ctx.globalCompositeOperation = 'multiply';
+    for (const g of gaussians) {
+      const [r, gg, b] = g.color;
+      // Life fade: ephemeral Gaussians fade over life; persistent ones stay full
+      const lifeFrac = g.persistent ? 1 : (1 - (g.step / (g.life + 1)));
+      const baseAlpha = 0.38 * lifeFrac * g.intensity;
+
+      for (const tIdx of g.occupied) {
+        const tx = tIdx % COLS;
+        const ty = (tIdx - tx) / COLS;
+        const dx = tx - g.ax, dy = ty - g.ay;
+        const r2 = (dx * dx + dy * dy) / (G_SIGMA_TILES * G_SIGMA_TILES);
+        const tileFalloff = Math.exp(-0.5 * r2);
+        const alpha = baseAlpha * tileFalloff;
+
+        const cx = (tx + 0.5) * tileW;
+        const cy = (ty + 0.5) * tileH;
+        const radius = Math.max(tileW, tileH) * 1.4;
+
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+        grad.addColorStop(0,    `rgba(${r},${gg},${b},${alpha})`);
+        grad.addColorStop(0.6,  `rgba(${r},${gg},${b},${alpha * 0.35})`);
+        grad.addColorStop(1,    `rgba(${r},${gg},${b},0)`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+      }
+    }
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Mark anchor tiles with a small filled square — the "owner" tile
+    for (const g of gaussians) {
+      const cx = (g.ax + 0.5) * tileW;
+      const cy = (g.ay + 0.5) * tileH;
+      const s = Math.min(tileW, tileH) * 0.18;
+      ctx.fillStyle = `rgba(${g.color[0]},${g.color[1]},${g.color[2]},${0.85 * g.intensity})`;
+      ctx.fillRect(cx - s / 2, cy - s / 2, s, s);
+    }
+
+    // Channel pulses — thin lines along the edge the copy traversed
+    const now = performance.now();
+    for (const p of pulses) {
+      const age = now - p.born;
+      const lifeFrac = 1 - age / 400;
+      if (lifeFrac <= 0) continue;
+      // Edge between the two tiles
+      const x1 = (p.fromX + 0.5) * tileW, y1 = (p.fromY + 0.5) * tileH;
+      const x2 = (p.toX   + 0.5) * tileW, y2 = (p.toY   + 0.5) * tileH;
+      ctx.strokeStyle = `rgba(122, 56, 38, ${0.55 * lifeFrac})`;
+      ctx.lineWidth = 1.2 * dpr;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+
+    // -------- Shortest path through markers --------
+    // Rendered as a dimmer base line + a bright travelling "head" that
+    // cycles along the path, plus occasional perpendicular arc-jitter
+    // to suggest minimal lightning without cartoonishness.
+    if (markers.length >= 2) {
+      const order = greedyRoute(markers);
+      // Build the path as a list of points (L-shaped Manhattan segments)
+      const pts = [];
+      for (let i = 0; i < order.length; i++) {
+        const m = order[i];
+        const x = (m.tx + 0.5) * tileW;
+        const y = (m.ty + 0.5) * tileH;
+        if (i === 0) {
+          pts.push([x, y]);
+        } else {
+          const [px, py] = pts[pts.length - 1];
+          // Horizontal first, then vertical (chip-trace style)
+          if (px !== x) pts.push([x, py]);
+          if (py !== y) pts.push([x, y]);
+        }
+      }
+
+      // Cumulative arc lengths along the path, for the sweep parameter
+      const segLen = [];
+      let totalLen = 0;
+      for (let i = 1; i < pts.length; i++) {
+        const dx = pts[i][0] - pts[i-1][0];
+        const dy = pts[i][1] - pts[i-1][1];
+        const L = Math.hypot(dx, dy);
+        segLen.push(L);
+        totalLen += L;
+      }
+
+      const [pr, pg, pb] = PATH_COLOR;
+
+      // 1. Base path — dim underwash
+      ctx.strokeStyle = `rgba(${pr},${pg},${pb},0.35)`;
+      ctx.lineWidth = 1.5 * dpr;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.stroke();
+
+      // 2. Bright travelling head — a short bright segment that cycles
+      //    along the path, with a fading trail behind it
+      const SWEEP_SPEED = 220; // px/sec
+      const HEAD_LEN = Math.max(60, totalLen * 0.18); // trail length
+      const now2 = performance.now();
+      // Cycle position: head leads, trail fades behind.
+      // Loop with a pause at the end (total period = traverse + pause)
+      const CYCLE_MS = (totalLen / SWEEP_SPEED) * 1000 + 500;
+      const cyclePos = (now2 % CYCLE_MS) / CYCLE_MS;
+      const headDist = cyclePos * (totalLen + HEAD_LEN) - HEAD_LEN;
+
+      // Walk along path, drawing segments where the head's glow covers them.
+      // We sample fine steps along the arc and draw bright dots; this is
+      // simpler than parameterising each segment and produces a smooth trail.
+      const SAMPLES = Math.max(60, Math.floor(totalLen / 2));
+      for (let s = 0; s < SAMPLES; s++) {
+        const d = (s / SAMPLES) * totalLen;
+        // Distance behind the head; negative = ahead of head (not yet lit)
+        const behind = headDist - d;
+        if (behind < 0 || behind > HEAD_LEN) continue;
+        // Brightness profile: peak near head, exponential fade along trail
+        const t = behind / HEAD_LEN;            // 0 at head, 1 at tail
+        const alpha = Math.pow(1 - t, 2.2) * 0.95;
+        // Locate point (x,y) at arc distance d along path
+        let remaining = d, px = pts[0][0], py = pts[0][1];
+        for (let i = 0; i < segLen.length; i++) {
+          if (remaining <= segLen[i]) {
+            const f = segLen[i] > 0 ? remaining / segLen[i] : 0;
+            px = pts[i][0] + (pts[i+1][0] - pts[i][0]) * f;
+            py = pts[i][1] + (pts[i+1][1] - pts[i][1]) * f;
+            break;
+          }
+          remaining -= segLen[i];
+          px = pts[i+1][0]; py = pts[i+1][1];
+        }
+        // Draw a small bright spot
+        const dotR = (2 + 1.5 * (1 - t)) * dpr;
+        const grad = ctx.createRadialGradient(px, py, 0, px, py, dotR * 2.5);
+        grad.addColorStop(0,   `rgba(${pr + 40},${pg + 40},${pb + 30},${alpha})`);
+        grad.addColorStop(0.4, `rgba(${pr},${pg},${pb},${alpha * 0.6})`);
+        grad.addColorStop(1,   `rgba(${pr},${pg},${pb},0)`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(px - dotR * 2.5, py - dotR * 2.5, dotR * 5, dotR * 5);
+      }
+
+      // 3. Crackly arcs — jagged hairlines branching off the trail.
+      //    Multiple arcs per frame spread along the head's trail, some
+      //    zigzag, some straight, using true randomness so each frame
+      //    looks different (reads as electrical crackle rather than pattern).
+      if (headDist >= -HEAD_LEN && headDist <= totalLen + HEAD_LEN) {
+        // Helper: point along path at arc distance d, with tangent direction
+        function pointAt(d) {
+          let rem = d;
+          for (let i = 0; i < segLen.length; i++) {
+            if (rem <= segLen[i]) {
+              const f = segLen[i] > 0 ? rem / segLen[i] : 0;
+              const x = pts[i][0] + (pts[i+1][0] - pts[i][0]) * f;
+              const y = pts[i][1] + (pts[i+1][1] - pts[i][1]) * f;
+              const dx = segLen[i] > 0 ? (pts[i+1][0] - pts[i][0]) / segLen[i] : 1;
+              const dy = segLen[i] > 0 ? (pts[i+1][1] - pts[i][1]) / segLen[i] : 0;
+              return [x, y, dx, dy];
+            }
+            rem -= segLen[i];
+          }
+          const last = pts[pts.length - 1];
+          return [last[0], last[1], 1, 0];
+        }
+
+        // Number of arcs scales with trail length — longer path, more crackle
+        const nArcs = 6 + ((Math.random() * 6) | 0);
+        for (let a = 0; a < nArcs; a++) {
+          // Pick a random distance within the trail (biased toward the head)
+          const trailBias = Math.pow(Math.random(), 1.6);
+          const d = headDist - trailBias * HEAD_LEN;
+          if (d < 0 || d > totalLen) continue;
+
+          const [ox, oy, tx2, ty2] = pointAt(d);
+          const perpX = -ty2, perpY = tx2;
+          const side = Math.random() < 0.5 ? -1 : 1;
+
+          // Arc intensity fades with distance behind head (brighter near head)
+          const trailT = trailBias;
+          const arcAlpha = Math.pow(1 - trailT, 1.4) * (0.55 + Math.random() * 0.4);
+          const arcLen = (1.5 + Math.random() * 6) * dpr;
+
+          ctx.strokeStyle = `rgba(${pr + 45},${pg + 45},${pb + 30},${arcAlpha})`;
+          ctx.lineWidth = (0.6 + Math.random() * 0.7) * dpr;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(ox, oy);
+
+          // ~40% of arcs are zigzags (2-3 segments with jitter), rest straight
+          if (Math.random() < 0.4) {
+            const segs = 2 + ((Math.random() * 2) | 0);
+            let cx = ox, cy = oy;
+            for (let si = 1; si <= segs; si++) {
+              const frac = si / segs;
+              // Walk perpendicular, with lateral jitter along the tangent
+              const perpAmt = arcLen * frac * side;
+              const tanJitter = (Math.random() - 0.5) * arcLen * 0.6;
+              const nx = ox + perpX * perpAmt + tx2 * tanJitter;
+              const ny = oy + perpY * perpAmt + ty2 * tanJitter;
+              ctx.lineTo(nx, ny);
+              cx = nx; cy = ny;
+            }
+          } else {
+            // Straight hairline, slight angular jitter
+            const angJitter = (Math.random() - 0.5) * 0.4;
+            const cosJ = Math.cos(angJitter), sinJ = Math.sin(angJitter);
+            const dx = perpX * cosJ - perpY * sinJ;
+            const dy = perpX * sinJ + perpY * cosJ;
+            ctx.lineTo(ox + dx * side * arcLen, oy + dy * side * arcLen);
+          }
+          ctx.stroke();
+        }
+
+        // Plus — occasional bright "flash" at the head: a tiny burst of
+        // short radial arcs, visible only for a few frames per cycle
+        if (headDist >= 0 && headDist <= totalLen && Math.random() < 0.35) {
+          const [hx, hy] = pointAt(headDist);
+          const flashArms = 3 + ((Math.random() * 4) | 0);
+          ctx.strokeStyle = `rgba(${pr + 60},${pg + 60},${pb + 45},${0.7 + Math.random() * 0.25})`;
+          ctx.lineWidth = 0.8 * dpr;
+          for (let f = 0; f < flashArms; f++) {
+            const ang = Math.random() * Math.PI * 2;
+            const len = (2 + Math.random() * 5) * dpr;
+            ctx.beginPath();
+            ctx.moveTo(hx, hy);
+            ctx.lineTo(hx + Math.cos(ang) * len, hy + Math.sin(ang) * len);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // -------- Markers --------
+    // Persistent graph nodes placed by clicking.
+    const [mr, mg, mb] = MARKER_COLOR;
+    for (let i = 0; i < markers.length; i++) {
+      const m = markers[i];
+      const cx = (m.tx + 0.5) * tileW;
+      const cy = (m.ty + 0.5) * tileH;
+      const rOuter = Math.min(tileW, tileH) * 0.42;
+      const rInner = Math.min(tileW, tileH) * 0.18;
+
+      // Steady halo — a breathing glow so the marker stays alive
+      const pulse = 0.65 + 0.25 * Math.sin(performance.now() * 0.003 + i);
+      const haloGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, rOuter * 2.5);
+      haloGrad.addColorStop(0,   `rgba(${mr},${mg},${mb},${0.25 * pulse})`);
+      haloGrad.addColorStop(1,   `rgba(${mr},${mg},${mb},0)`);
+      ctx.fillStyle = haloGrad;
+      ctx.fillRect(cx - rOuter * 2.5, cy - rOuter * 2.5, rOuter * 5, rOuter * 5);
+
+      // Ring
+      ctx.strokeStyle = `rgba(${mr},${mg},${mb},0.8)`;
+      ctx.lineWidth = 1.2 * dpr;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rOuter * 0.7, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Core dot
+      ctx.fillStyle = `rgba(${mr},${mg},${mb},1)`;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rInner, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Sequence number — helps users see the path order (0-indexed)
+      if (markers.length >= 2) {
+        ctx.fillStyle = `rgba(${mr},${mg},${mb},0.9)`;
+        ctx.font = `${Math.round(tileH * 0.55)}px var(--mono, monospace)`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(i), cx, cy - rOuter * 1.15);
+      }
+    }
+
+    // Pointer hint tile — the tile the mouse is over, faintly marked
+    if (pointer.active) {
+      const tx = Math.floor(pointer.x / tileW);
+      const ty = Math.floor(pointer.y / tileH);
+      if (tx >= 0 && tx < COLS && ty >= 0 && ty < ROWS) {
+        ctx.strokeStyle = 'rgba(122, 56, 38, 0.35)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(
+          Math.round(tx * tileW) + 0.5,
+          Math.round(ty * tileH) + 0.5,
+          Math.round(tileW) - 1,
+          Math.round(tileH) - 1
+        );
+      }
+    }
+  }
+
+  // Greedy nearest-neighbour ordering: start at marker[0], always go to
+  // the nearest unvisited marker by Manhattan distance, end at marker[N-1]
+  // if it's still unvisited. For small N this is fine; shortest-path
+  // through all nodes is a TSP but greedy gets a good-looking result.
+  function greedyRoute(ms) {
+    if (ms.length <= 2) return ms.slice();
+    const first = ms[0], last = ms[ms.length - 1];
+    const middle = ms.slice(1, -1);
+    const route = [first];
+    let cur = first;
+    while (middle.length) {
+      let bestI = 0, bestD = Infinity;
+      for (let i = 0; i < middle.length; i++) {
+        const d = Math.abs(middle[i].tx - cur.tx) + Math.abs(middle[i].ty - cur.ty);
+        if (d < bestD) { bestD = d; bestI = i; }
+      }
+      cur = middle.splice(bestI, 1)[0];
+      route.push(cur);
+    }
+    route.push(last);
+    return route;
+  }
+
+  // -------- main loop --------
+  function loop(now) {
+    if (now - lastStepAt >= STEP_MS) {
+      step();
+      lastStepAt = now;
+    }
+
+    // Pointer-driven spawns (rate-limited)
+    if (pointer.active && now - lastSpawn >= MAX_SPAWN_MS) {
+      const tx = Math.floor(pointer.x / tileW);
+      const ty = Math.floor(pointer.y / tileH);
+      if (tx >= 0 && tx < COLS && ty >= 0 && ty < ROWS) {
+        spawnGaussian(tx, ty);
+        lastSpawn = now;
+      }
+    }
+
+    // Twinkle — random low-intensity Gaussians, spaced by variable interval.
+    // Suppressed while pointer is active (hover takes over)
+    if (!pointer.active && now >= nextTwinkleAt) {
+      const tx = (Math.random() * COLS) | 0;
+      const ty = (Math.random() * ROWS) | 0;
+      // slight variation in intensity so twinkles don't look uniform
+      const intensity = TWINKLE_INTENSITY * (0.7 + Math.random() * 0.6);
+      spawnGaussian(tx, ty, {
+        intensity,
+        life: TWINKLE_LIFE,
+        emitPulses: false, // twinkles don't pulse their channels — quieter
+      });
+      nextTwinkleAt = now + TWINKLE_MIN_MS + Math.random() * (TWINKLE_MAX_MS - TWINKLE_MIN_MS);
+    }
+
+    draw();
+    if (!reduceMotion) requestAnimationFrame(loop);
+  }
+
+  // Persistent-bloom management: keeps exactly one persistent Gaussian
+  // per marker when beams are on, and zero when off. Incremental — only
+  // removes/adds the persistent blooms that actually changed, so other
+  // markers' blooms don't re-propagate when you add/remove neighbours.
+  function syncBeams() {
+    if (!beamsOn) {
+      // Drop all persistent blooms
+      for (let i = gaussians.length - 1; i >= 0; i--) {
+        if (gaussians[i].persistent) gaussians.splice(i, 1);
+      }
+      for (const m of markers) m.bloom = null;
+      return;
+    }
+    // Drop persistent blooms whose markers no longer exist
+    const markerKeys = new Set(markers.map(m => m.tx + ',' + m.ty));
+    for (let i = gaussians.length - 1; i >= 0; i--) {
+      const g = gaussians[i];
+      if (g.persistent && !markerKeys.has(g.ax + ',' + g.ay)) gaussians.splice(i, 1);
+    }
+    // Add persistent blooms for markers that don't have one yet
+    for (const m of markers) {
+      if (m.bloom && gaussians.includes(m.bloom)) continue;
+      m.bloom = spawnGaussian(m.tx, m.ty, {
+        intensity: BEAM_INTENSITY,
+        color: MARKER_COLOR,
+        persistent: true,
+      });
+    }
+  }
+
+  // -------- input --------
+  function setPointer(ev) {
+    const rect = canvas.getBoundingClientRect();
+    const x = (ev.clientX - rect.left) * dpr;
+    const y = (ev.clientY - rect.top)  * dpr;
+    pointer.x = x; pointer.y = y;
+    pointer.active = true;
+  }
+  canvas.addEventListener('mousemove', setPointer);
+  canvas.addEventListener('mouseleave', () => { pointer.active = false; });
+  canvas.addEventListener('touchmove', (ev) => {
+    const t = ev.touches[0];
+    if (!t) return;
+    setPointer(t);
+    ev.preventDefault();
+  }, { passive: false });
+  canvas.addEventListener('touchend', () => { pointer.active = false; });
+
+  // Click places a persistent marker. Markers form a graph; shortest
+  // path (by Manhattan distance) between first and last is highlighted.
+  function handleClick(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const x = (clientX - rect.left) * dpr;
+    const y = (clientY - rect.top)  * dpr;
+    const tx = Math.floor(x / tileW);
+    const ty = Math.floor(y / tileH);
+    if (tx < 0 || tx >= COLS || ty < 0 || ty >= ROWS) return;
+
+    // Click on an existing marker = remove it (lets you edit the path)
+    const existingIdx = markers.findIndex(m => m.tx === tx && m.ty === ty);
+    if (existingIdx !== -1) {
+      markers.splice(existingIdx, 1);
+      syncBeams();
+      return;
+    }
+
+    markers.push({ tx, ty, born: performance.now() });
+    // When beams are on, the persistent bloom's own propagation animation
+    // provides placement feedback. When beams are off, spawn an ephemeral
+    // one so the click still has a visible response.
+    if (!beamsOn) {
+      spawnGaussian(tx, ty, { intensity: BEAM_INTENSITY, life: G_LIFE, color: MARKER_COLOR });
+    }
+    syncBeams();
+  }
+  canvas.addEventListener('click', (ev) => handleClick(ev.clientX, ev.clientY));
+
+  // Beams toggle — when on, each marker holds a persistent bloom
+  // (identical to a mouse-hover bloom frozen at its peak).
+  const beamsBtn = document.getElementById('bloom-beams');
+  if (beamsBtn) {
+    beamsBtn.addEventListener('click', () => {
+      beamsOn = !beamsOn;
+      beamsBtn.setAttribute('aria-pressed', beamsOn ? 'true' : 'false');
+      beamsBtn.textContent = beamsOn ? 'beams on' : 'beams off';
+      syncBeams();
+    });
+  }
+
+  // Reset button — clears markers, gaussians, pulses
+  const resetBtn = document.getElementById('bloom-reset');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      markers.length = 0;
+      gaussians.length = 0;
+      pulses.length = 0;
+    });
+  }
+
+  // -------- boot --------
+  resize();
+  window.addEventListener('resize', resize);
+  if (reduceMotion) {
+    // One static sample so the element isn't empty
+    spawnGaussian(COLS >> 1, ROWS >> 1);
+    for (let i = 0; i < G_LIFE; i++) step();
+    draw();
+  } else {
+    requestAnimationFrame(loop);
+  }
+})();
+</script>
+
+</body>
+</html>

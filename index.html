@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nicholas Fry</title>
+  <meta name="description" content="Nicholas Fry — PhD researcher at Imperial College London working on differentiable rendering, compilers, and on-sensor vision." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Magritte palette — The Son of Man / The Empire of Light / The False Mirror */
+      --sky:         #9cb8c9;   /* muted Magritte sky */
+      --sky-deep:    #6a8ca1;
+      --cloud:       #f4f0e8;   /* warm cloud white, page bg */
+      --cloud-soft:  #ece6d8;
+      --ink:         #18191c;   /* near-black, not pure */
+      --ink-soft:    #3a3c3f;
+      --ink-muted:   #7c7a74;
+      --ink-faint:   #b4ad9f;
+      --rule:        #d9d2c2;
+      --accent:      #5a8aa8;   /* Magritte sky blue — the empire of light */
+      --leaf:        #3f5a3e;   /* Magritte green */
+      --serif:       'Cormorant Garamond', 'Garamond', Georgia, serif;
+      --mono:        'JetBrains Mono', Menlo, monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --sky:         #2a3a48;
+        --sky-deep:    #1a2733;
+        --cloud:       #161616;
+        --cloud-soft:  #1e1e1d;
+        --ink:         #efeae0;
+        --ink-soft:    #c5c0b5;
+        --ink-muted:   #86837c;
+        --ink-faint:   #4a4843;
+        --rule:        #2a2826;
+        --accent:      #8cb5d0;
+        --leaf:        #6a8a6b;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--serif);
+      font-size: 19px;
+      line-height: 1.55;
+      font-weight: 400;
+      color: var(--ink);
+      background: var(--cloud);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 0;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    a:hover { color: var(--accent); }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 1.75rem;
+    }
+
+    /* ================ HERO ================ */
+    .hero {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 6rem 0 4rem;
+      overflow: hidden;
+    }
+
+    /* ASCII donut — sits next to the name */
+    .name-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+    .name-row h1 { margin-bottom: 0; }
+    .donut {
+      font-family: var(--mono);
+      font-size: 6.5px;
+      line-height: 1;
+      letter-spacing: 0;
+      white-space: pre;
+      color: var(--ink);
+      opacity: 0.75;
+      pointer-events: none;
+      user-select: none;
+      text-align: left;
+      font-feature-settings: "liga" 0;
+      margin: 0;
+      flex-shrink: 0;
+    }
+    @media (max-width: 720px) {
+      .name-row { gap: 1rem; }
+      .donut { font-size: 5px; opacity: 0.6; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .donut { /* static render, no animation */ }
+    }
+
+    .hero-content { position: relative; z-index: 2; }
+
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+    @media (max-width: 720px) {
+      .hero-layout {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+      }
+    }
+
+    .portrait {
+      width: 180px;
+      height: 220px;
+      background: var(--cloud-soft);
+      position: relative;
+      overflow: hidden;
+      /* a whisper of a frame, not a border */
+      box-shadow: inset 0 0 0 1px var(--rule);
+    }
+    .portrait img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center 90%;
+      transform: scale(1.3);
+      display: block;
+    }
+    .portrait-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.75rem;
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+    .portrait-placeholder svg {
+      width: 36px; height: 36px;
+      opacity: 0.5;
+    }
+    @media (max-width: 720px) {
+      .portrait { width: 140px; height: 170px; }
+    }
+
+    .hero-text { min-width: 0; }
+
+    .kicker {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--ink-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(2.75rem, 6vw, 4rem);
+      line-height: 1.02;
+      letter-spacing: -0.015em;
+      margin-bottom: 1.75rem;
+      color: var(--ink);
+    }
+    h1 em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--accent);
+    }
+
+    .bio {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      max-width: 36rem;
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+    }
+    .bio em { font-style: italic; }
+
+    .hero-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 1.75rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+    }
+    .hero-links a {
+      color: var(--ink-muted);
+      border-bottom: none;
+      padding: 0.25rem 0;
+      position: relative;
+    }
+    .hero-links a::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 1px;
+      background: var(--ink-muted);
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.3s ease, background 0.2s;
+    }
+    .hero-links a:hover { color: var(--accent); }
+    .hero-links a:hover::after { transform: scaleX(1); background: var(--accent); }
+
+    /* ================ SECTIONS ================ */
+    section {
+      padding: 1rem 0 5rem;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--ink-muted);
+      margin-bottom: 2.5rem;
+    }
+
+    /* ================ CURRENT ================ */
+    .now p {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      line-height: 1.45;
+      color: var(--ink);
+      font-weight: 400;
+      max-width: 36rem;
+    }
+    .now p em { font-style: italic; color: var(--accent); }
+
+    /* ================ PAPERS ================ */
+    .paper {
+      padding: 3rem 0;
+      border-bottom: 1px solid var(--rule);
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .paper:first-of-type { border-top: 1px solid var(--rule); }
+
+    .paper-visual {
+      width: 160px; height: 160px;
+      position: relative;
+    }
+    .paper-visual svg { width: 100%; height: 100%; display: block; }
+
+    .paper-meta {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+      margin-bottom: 0.6rem;
+      display: flex;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+    }
+    .paper-meta .venue { color: var(--ink); }
+    .paper-meta .status {
+      font-style: italic;
+      font-family: var(--serif);
+      font-size: 0.88rem;
+      letter-spacing: 0;
+      color: var(--ink-muted);
+    }
+
+    .paper h3 {
+      font-family: var(--serif);
+      font-size: 1.75rem;
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+
+    .paper .authors {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--ink-muted);
+      margin-bottom: 0.9rem;
+    }
+    .paper .authors .me { color: var(--ink); font-style: normal; }
+
+    .paper .desc {
+      font-family: var(--serif);
+      font-size: 1.02rem;
+      line-height: 1.55;
+      color: var(--ink-soft);
+    }
+
+    @media (max-width: 680px) {
+      .paper { grid-template-columns: 1fr; gap: 1.5rem; }
+      .paper-visual { width: 140px; height: 140px; }
+    }
+
+    /* ================ EXPERIENCE ================ */
+    .xp-item {
+      padding: 1.4rem 0;
+      border-bottom: 1px solid var(--rule);
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 2.5rem;
+      align-items: baseline;
+    }
+    .xp-item:first-child { border-top: 1px solid var(--rule); }
+
+    .xp-when {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      color: var(--ink-muted);
+    }
+    .xp-when .where {
+      display: block;
+      font-style: italic;
+      font-family: var(--serif);
+      font-size: 0.9rem;
+      color: var(--ink-faint);
+      margin-top: 0.1rem;
+      letter-spacing: 0;
+    }
+
+    .xp-role {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--ink);
+      margin-bottom: 0.3rem;
+      letter-spacing: -0.005em;
+    }
+    .xp-role .org { font-style: italic; color: var(--accent); }
+    .xp-desc {
+      font-family: var(--serif);
+      font-size: 0.98rem;
+      line-height: 1.5;
+      color: var(--ink-soft);
+    }
+
+    @media (max-width: 680px) {
+      .xp-item { grid-template-columns: 1fr; gap: 0.4rem; }
+    }
+
+    /* ================ NOTES ================ */
+    .notes p {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      max-width: 36rem;
+      margin-bottom: 1.25rem;
+    }
+    .notes strong { font-weight: 500; color: var(--ink); }
+
+    /* ================ FOOTER ================ */
+    footer {
+      padding: 4rem 0 5rem;
+      border-top: 1px solid var(--rule);
+      margin-top: 3rem;
+    }
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    footer .sig {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--ink-muted);
+    }
+    footer .meta {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+
+  <div class="wrap hero-content">
+    <div class="hero-layout">
+      <div class="portrait" aria-label="Portrait of Nicholas Fry">
+        <img src="me2.jpg" alt="Nicholas Fry">
+      </div>
+
+      <div class="hero-text">
+        <div class="kicker">PhD · Imperial College London</div>
+
+        <div class="name-row">
+          <h1>Nicholas Fry</h1>
+          <!-- ASCII donut (a1k0n math, R1=1, R2=2, K2=5) -->
+          <pre class="donut" id="donut" aria-hidden="true"></pre>
+        </div>
+
+        <p class="bio">
+          I work on differentiable rendering, SLAM,
+          on-sensor vision, computer architecture, and compiler design. Supervised by
+          <a href="https://www.imperial.ac.uk/people/p.kelly">Paul H. J. Kelly</a> and
+          <a href="https://www.doc.ic.ac.uk/~ajd/">Andrew J. Davison</a>.
+        </p>
+
+        <nav class="hero-links">
+          <a href="mailto:nmjfry@gmail.com">email</a>
+          <a href="https://github.com/nmjfry" target="_blank" rel="noopener">github</a>
+          <a href="https://scholar.google.com/" target="_blank" rel="noopener">scholar</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<!-- ============ EXPERIENCE ============ -->
+<section>
+  <div class="wrap">
+    <div class="section-label">EXPERIENCE</div>
+
+    <div class="xp-item">
+      <div class="xp-when">2024 — present<span class="where">London</span></div>
+      <div>
+        <div class="xp-role">PhD Researcher · <span class="org">Imperial College London</span></div>
+        <p class="xp-desc">Differentiable rendering, compilers, on-sensor vision.</p>
+      </div>
+    </div>
+
+    <div class="xp-item">
+      <div class="xp-when">2023<span class="where">Paris-Saclay</span></div>
+      <div>
+        <div class="xp-role">MLIR Research Intern · <span class="org">CEA-List</span></div>
+        <p class="xp-desc">
+          Built an MLIR-based tool that auto-generates instruction-set-simulator state transition
+          functions from an accelerator design (Verilog/Chisel → CIRCT → MLIR). Presented as a <a href="https://llvm.swoogo.com/2024eurollvmslides/Posters/Fry-Poster-GeneratingInstructionSetSimulatorsFromHardwareDescription-WithCIRCTMLIR.pdf" target="_blank" rel="noopener">poster</a> at <a href="https://llvm.swoogo.com/2024eurollvm" target="_blank" rel="noopener">EuroLLVM 2024</a>.
+        </p>
+      </div>
+    </div>
+
+    <div class="xp-item">
+      <div class="xp-when">2022<span class="where">Bristol</span></div>
+      <div>
+        <div class="xp-role">LLVM Compiler Intern · <span class="org">Graphcore</span></div>
+        <p class="xp-desc">
+          Scheduling model for the IPU backend in TableGen/C++, and an MIR pass that removed register
+          hazard bubbles. Reduced cycle count by up to 30% on client code. llvm-mca support and objdump work.
+        </p>
+      </div>
+    </div>
+
+    <div class="xp-item">
+      <div class="xp-when">2020 — 2024<span class="where">London</span></div>
+      <div>
+        <div class="xp-role">MEng Computing · <span class="org">Imperial College London</span></div>
+        <p class="xp-desc">
+          Visual Computing &amp; Robotics, first-class honours. Thesis: <em>3D Gaussian Splatting on a
+          Graph Processor</em>. Supervised by Andrew J. Davison, awarded the Corporate Partnership
+          Prize for Technical Innovation.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NOTES ============ -->
+<section class="notes">
+  <div class="wrap">
+    <div class="section-label">OTHER</div>
+    <p>
+      TA and marker for Imperial Robotics (3rd year &amp; MSc) and Advanced Computer Architecture
+      (3rd &amp; 4th year).  Poster presenter at <a href="https://llvm.swoogo.com/2024eurollvm" target="_blank" rel="noopener">EuroLLVM 2024</a> and
+      <a href="https://reach.theiet.org/" target="_blank" rel="noopener">REACH 2024</a>. Volunteered for <a href="https://www.egsr2024.uk/" target="_blank" rel="noopener">EGSR 2024</a>. Attended <a href="https://iplab.dmi.unict.it/icvss2025/" target="_blank" rel="noopener">ICVSS 2025</a>. Also attended <a href="https://paiss.inria.fr/" target="_blank" rel="noopener">PAISS 2025</a> and <a href="https://www.hipeac.net/acaces/2024/#/program/courses/" target="_blank" rel="noopener">ACACES 2024</a> (both grant-awarded).
+    </p>
+    <p>
+      English is my mother tongue but I speak fluent French and have working knowledge of Spanish and Portuguese.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="sig">— nf</div>
+    <div class="meta">April 2026</div>
+    <div class="meta" style="margin-top:0.5rem"><a href="https://www.a1k0n.net/2011/07/20/donut-math.html" target="_blank" rel="noopener">donut math</a> by a1k0n</div>
+  </div>
+</footer>
+
+<script>
+/*
+ * ASCII donut — port of a1k0n's donut math
+ * (https://www.a1k0n.net/2011/07/20/donut-math.html)
+ * Same constants, same luminance ramp, same spin rates.
+ */
+(function () {
+  const el = document.getElementById('donut');
+  if (!el) return;
+
+  // Original's screen is 80x22, but that wraps awkwardly. 40x22 keeps
+  // it tight enough to float in the hero without dominating.
+  const SCREEN_W = 40;
+  const SCREEN_H = 22;
+  const THETA_STEP = 0.07;
+  const PHI_STEP   = 0.02;
+  const R1 = 1, R2 = 2, K2 = 5;
+  // K1 chosen so the donut just fits within the screen (a1k0n's formula)
+  const K1_X = SCREEN_W * K2 * 3 / (8 * (R1 + R2));
+  // y-axis in a monospace grid is ~2x taller than x per char, so halve
+  const K1_Y = K1_X * 0.5;
+  const LUM = '.,-~:;=!*#$@';
+
+  let A = 0, B = 0;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function frame() {
+    const cosA = Math.cos(A), sinA = Math.sin(A);
+    const cosB = Math.cos(B), sinB = Math.sin(B);
+
+    const output = new Array(SCREEN_W * SCREEN_H).fill(' ');
+    const zbuf   = new Array(SCREEN_W * SCREEN_H).fill(0);
+
+    for (let theta = 0; theta < 6.28; theta += THETA_STEP) {
+      const cosT = Math.cos(theta), sinT = Math.sin(theta);
+
+      for (let phi = 0; phi < 6.28; phi += PHI_STEP) {
+        const cosP = Math.cos(phi), sinP = Math.sin(phi);
+
+        const circleX = R2 + R1 * cosT;
+        const circleY = R1 * sinT;
+
+        const x = circleX * (cosB * cosP + sinA * sinB * sinP) - circleY * cosA * sinB;
+        const y = circleX * (sinB * cosP - sinA * cosB * sinP) + circleY * cosA * cosB;
+        const z = K2 + cosA * circleX * sinP + circleY * sinA;
+        const ooz = 1 / z;
+
+        const xp = Math.floor(SCREEN_W / 2 + K1_X * ooz * x);
+        const yp = Math.floor(SCREEN_H / 2 - K1_Y * ooz * y);
+
+        const L = cosP * cosT * sinB - cosA * cosT * sinP - sinA * sinT
+                + cosB * (cosA * sinT - cosT * sinA * sinP);
+
+        if (L > 0 && xp >= 0 && xp < SCREEN_W && yp >= 0 && yp < SCREEN_H) {
+          const idx = xp + SCREEN_W * yp;
+          if (ooz > zbuf[idx]) {
+            zbuf[idx] = ooz;
+            const li = Math.min(11, Math.floor(L * 8));
+            output[idx] = LUM[li];
+          }
+        }
+      }
+    }
+
+    // Assemble into a string with newlines
+    let out = '';
+    for (let j = 0; j < SCREEN_H; j++) {
+      out += output.slice(j * SCREEN_W, (j + 1) * SCREEN_W).join('') + '\n';
+    }
+    el.textContent = out;
+
+    if (!reduceMotion) {
+      A += 0.04;
+      B += 0.02;
+      requestAnimationFrame(frame);
+    }
+  }
+
+  frame();
+})();
+</script>
+
+
+
+
+</body>
+</html>
