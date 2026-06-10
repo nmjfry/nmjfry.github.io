@@ -260,7 +260,7 @@
       width: 160px; height: 160px;
       position: relative;
     }
-    .paper-visual svg { width: 100%; height: 100%; display: block; }
+    .paper-visual { overflow: hidden; }
 
     .paper-meta {
       font-family: var(--mono);
@@ -305,6 +305,13 @@
       font-size: 1.02rem;
       line-height: 1.55;
       color: var(--ink-soft);
+    }
+
+    .paper-visual video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transform: scale(2.2);
     }
 
     @media (max-width: 680px) {
@@ -433,6 +440,32 @@
   </div>
 </header>
 
+
+<!-- ============ PUBLICATIONS ============ -->
+<section>
+  <div class="wrap">
+    <div class="section-label">PUBLICATIONS</div>
+
+    <div class="paper">
+      <div class="paper-visual">
+        <video src="assets/clip7.mp4" muted playsinline preload="auto"></video>
+      </div>
+      <div>
+        <div class="paper-meta">
+          <span class="venue">arXiv 2026</span>
+        </div>
+        <h3>Triangle Splatting SLAM</h3>
+        <p class="authors"><span class="me">Nicholas Fry</span>, <a href="https://edexheim.github.io/" target="_blank" rel="noopener">Eric Dexheimer</a>, <a href="https://makezur.github.io/" target="_blank" rel="noopener">Kirill Mazur</a>, <a href="http://www.doc.ic.ac.uk/~phjk" target="_blank" rel="noopener">Paul H. J. Kelly</a>, <a href="https://www.doc.ic.ac.uk/~ajd/" target="_blank" rel="noopener">Andrew J. Davison</a></p>
+        <p class="desc">A dense RGB-D SLAM system that reconstructs on-the-fly triangle meshes using differentiable triangle splatting.</p>
+        <nav class="hero-links" style="margin-top:0.75rem">
+          <a href="https://nmjfry.github.io/triangle-splatting-slam/" target="_blank" rel="noopener">project page</a>
+          <a href="https://arxiv.org/abs/2605.31419" target="_blank" rel="noopener">paper</a>
+          <a href="https://youtu.be/ouVt5GRKilQ" target="_blank" rel="noopener">video</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ============ EXPERIENCE ============ -->
 <section>
@@ -586,6 +619,22 @@
 
   frame();
 })();
+
+document.querySelectorAll('.paper-visual').forEach(pv => {
+  const vid = pv.querySelector('video');
+  if (!vid) return;
+  let timer;
+  pv.addEventListener('mouseenter', () => {
+    vid.currentTime = 0;
+    vid.play();
+    timer = setTimeout(() => { vid.pause(); }, 1000);
+  });
+  pv.addEventListener('mouseleave', () => {
+    clearTimeout(timer);
+    vid.pause();
+    vid.currentTime = 0;
+  });
+});
 </script>
 
 
