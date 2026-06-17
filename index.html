@@ -252,15 +252,14 @@
       display: grid;
       grid-template-columns: 160px 1fr;
       gap: 2.5rem;
-      align-items: start;
+      align-items: stretch;
     }
     .paper:first-of-type { border-top: 1px solid var(--rule); }
 
     .paper-visual {
-      width: 160px; height: 160px;
       position: relative;
+      overflow: hidden;
     }
-    .paper-visual { overflow: hidden; }
 
     .paper-meta {
       font-family: var(--mono);
@@ -315,8 +314,9 @@
     }
 
     @media (max-width: 680px) {
-      .paper { grid-template-columns: 1fr; gap: 1.5rem; }
-      .paper-visual { width: 140px; height: 140px; }
+      .paper { grid-template-columns: 100px 1fr; gap: 1rem; }
+      .paper h3 { font-size: 1.3rem; }
+      .paper .desc { font-size: 0.9rem; }
     }
 
     /* ================ EXPERIENCE ================ */
