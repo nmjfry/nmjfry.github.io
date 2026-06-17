@@ -306,18 +306,23 @@
       color: var(--ink-soft);
     }
 
-    .paper-visual video {
+    .paper-visual video,
+    .paper-visual img {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
       object-fit: cover;
       transform: scale(2.2);
     }
+    .paper-visual img { z-index: 1; }
+    .paper-visual video { z-index: 0; }
+    .paper-visual:hover video { z-index: 2; }
+    .paper-visual:hover img { z-index: 0; }
 
     @media (max-width: 680px) {
       .paper { grid-template-columns: 100px 1fr; gap: 1rem; }
       .paper h3 { font-size: 1.3rem; }
       .paper .desc { font-size: 0.9rem; }
-      .paper-visual video { transform: scale(1.5); }
+      .paper-visual video, .paper-visual img { transform: scale(1.2); }
     }
 
     /* ================ EXPERIENCE ================ */
@@ -450,7 +455,8 @@
 
     <div class="paper">
       <div class="paper-visual">
-        <video src="assets/clip7.mp4" muted playsinline preload="auto"></video>
+        <img src="assets/clip7_thumb.jpg" alt="Triangle Splatting SLAM">
+        <video src="assets/clip7.mp4" muted playsinline loop preload="auto"></video>
       </div>
       <div>
         <div class="paper-meta">
@@ -625,16 +631,13 @@
 document.querySelectorAll('.paper-visual').forEach(pv => {
   const vid = pv.querySelector('video');
   if (!vid) return;
-  let timer;
+  vid.addEventListener('timeupdate', () => { if (vid.currentTime >= 3) vid.currentTime = 0; });
   pv.addEventListener('mouseenter', () => {
     vid.currentTime = 0;
     vid.play();
-    timer = setTimeout(() => { vid.pause(); }, 1000);
   });
   pv.addEventListener('mouseleave', () => {
-    clearTimeout(timer);
     vid.pause();
-    vid.currentTime = 0;
   });
 });
 </script>
